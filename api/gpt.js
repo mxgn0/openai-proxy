@@ -1,15 +1,16 @@
 export default async function handler(req, res) {
-  // CORS Header setzen
+  // CORS für deinen Browser (GitHub Pages)
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  // Preflight-Anfrage abfangen
+  // OPTIONS Preflight
   if (req.method === "OPTIONS") {
     res.status(200).end();
     return;
   }
 
+  // Nur POST zulassen
   if (req.method !== "POST") {
     res.status(405).json({ error: "Only POST requests allowed" });
     return;
@@ -17,19 +18,25 @@ export default async function handler(req, res) {
 
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
-    res.status(500).json({ error: "Missing OpenAI API key" });
+    res.status(500).json({ error: "OPENAI_API_KEY not set" });
     return;
   }
 
-  const { hunger, mood, energy } = req.body;
-  const prompt = `Ich bin ein Tamagotchi. Mein Hunger ist bei ${hunger}, meine Laune bei ${mood} und meine Energie bei ${energy}. Was brauche ich am dringendsten?`;
-
   try {
+    const { hunger, mood, energy } = req.body;
+
+    const prompt = `Du bist ein Tamagotchi mit folgenden Werten:
+- Hunger: ${hunger}/100
+- Laune: ${mood}/100
+- Energie: ${energy}/100
+
+Sage dem Benutzer auf DEUTSCH in maximal einem Satz, was du am meisten brauchst. Sprich wie ein kleines Wesen in Ich-Form.`;
+
     const openaiRes = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`,
+        Authorization: `Bearer ${apiKey}`
       },
       body: JSON.stringify({
         model: "gpt-3.5-turbo",
@@ -39,8 +46,17 @@ export default async function handler(req, res) {
     });
 
     const data = await openaiRes.json();
-    res.status(200).json({ reply: data.choices?.[0]?.message?.content || "Ich bin verwirrt..." });
-  } catch (error) {
-    res.status(500).json({ error: "OpenAI request failed", details: error.message });
+
+    const reply = data.choices?.[0]?.message?.content;
+
+    if (!reply) {
+      console.error("GPT response leer:", data);
+      return res.status(500).json({ error: "GPT response leer", raw: data });
+    }
+
+    res.status(200).json({ reply });
+  } catch (err) {
+    console.error("GPT Fehler:", err);
+    res.status(500).json({ error: "Fehler bei GPT-Proxy", details: err.message });
   }
 }
