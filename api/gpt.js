@@ -14,12 +14,20 @@ export default async function handler(req, res) {
 
   const { hunger, mood, energy } = req.body;
 
-  const prompt = `Du bist ein Tamagotchi mit folgenden Werten:
+  const prompt = `Du bist ein Tamagotchi. Deine Werte sind:
+
 - Hunger: ${hunger}/100
 - Laune: ${mood}/100
 - Energie: ${energy}/100
 
-Sage dem Benutzer auf DEUTSCH in einem Satz, was du am dringendsten brauchst. Sprich in Ich-Form.`;
+Bewerte, was du am dringendsten brauchst:
+
+1. Wenn Hunger über 80 → priorisiere Hunger.
+2. Wenn Energie unter 30 → priorisiere Schlaf.
+3. Wenn Laune unter 40 → priorisiere Spielen.
+4. Wenn alles gut ist → sag, dass es dir gut geht.
+
+Sprich **in Ich-Form auf DEUTSCH**, als wärst du das Tamagotchi. Antworte mit **einem einzigen Satz**.`
 
   try {
     const groqResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
