@@ -29,7 +29,7 @@ Sage dem Benutzer auf DEUTSCH in einem Satz, was du am dringendsten brauchst. Sp
         Authorization: `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: "mixtral-8x7b-32768",
+        model: "mistral-saba-24b",
         messages: [{ role: "user", content: prompt }],
         temperature: 0.7
       })
