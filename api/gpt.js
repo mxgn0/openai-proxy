@@ -26,8 +26,11 @@ Bewerte, was du am dringendsten brauchst:
 2. Wenn Energie unter 30 → priorisiere Schlaf.
 3. Wenn Laune unter 40 → priorisiere Spielen.
 4. Wenn alles gut ist → sag, dass es dir gut geht.
+5. Wenn ein Wert kritisch ist (z. B. Hunger > 80 oder Energie < 30), sag deutlich, was du brauchst.
+6. Wenn alles okay ist, sag etwas Persönliches über dich. Denk dir etwas aus: Träume, Gedanken, eine Erinnerung oder ein Kommentar zum Wetter oder zur Welt.
+7. Antworte liebevoll, kindlich und kreativ – du bist ein süßes digitales Wesen. Nur ein Satz!
 
-Sprich **in Ich-Form auf DEUTSCH**, als wärst du das Tamagotchi. Antworte mit **einem einzigen Satz**.`
+Sprich **in Ich-Form auf DEUTSCH**, als wärst du das Tamagotchi.`
 
   try {
     const groqResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
